@@ -1,20 +1,20 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Programaniak Blog',
+  title: 'Marcin Parda',
   author: 'Marcin Parda',
-  headerTitle: 'Programaniak',
-  description: 'Rozwijaj swoje programistyczne umiejętności razem ze mną.',
-  language: 'pl',
-  theme: 'system', // system, dark or light
-  siteUrl: 'https://programaniak.vercel.app/',
-  siteRepo: 'https://github.com/MarcinParda/programaniak-blog',
+  headerTitle: '',
+  description: 'Develop your programming skills with me.',
+  language: 'en-us',
+  theme: 'system',
+  siteUrl: 'https://marcinparda.vercel.app/',
+  siteRepo: 'https://github.com/MarcinParda/marcinparda-blog',
   siteLogo: '/static/images/face.png',
   image: '/static/images/face.png',
   socialBanner: '/static/images/twitter-card.png',
   email: 'marcin98parda@gmail.com',
   github: 'https://github.com/MarcinParda',
   linkedin: 'https://linkedin.com/in/marcinparda',
-  locale: 'pl-PL',
+  locale: 'en-US',
   analytics: {
     plausibleDataDomain: 'programaniak.vercel.app',
     googleAnalyticsId: 'G-EZ2LTMDD9D',

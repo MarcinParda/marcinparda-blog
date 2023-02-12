@@ -4,8 +4,10 @@ import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 
 const Header = () => {
+  const { pathname } = useRouter()
   return (
     <header className="flex items-center justify-between py-10">
       <div>
@@ -36,7 +38,9 @@ const Header = () => {
             <Link
               key={link.title}
               href={link.href}
-              className="p-1 font-medium text-gray-900 dark:text-gray-100 sm:p-4"
+              className={`p-1 font-medium text-gray-900 dark:text-gray-100 sm:p-4 hover:bg-slate-100 rounded-lg ${
+                pathname === link.href ? 'underline' : ''
+              }`}
             >
               {link.title}
             </Link>
