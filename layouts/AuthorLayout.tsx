@@ -20,7 +20,12 @@ import Prisma from '@/components/icons/prisma.svg'
 import React from '@/components/icons/react.svg'
 import Vitest from '@/components/icons/vitest.svg'
 
-const skills = [
+interface Skill {
+  name: string
+  icon: ReactNode
+}
+
+const skills: Skill[] = [
   { name: 'Typescript', icon: Typescript },
   { name: 'Javascript', icon: Javascript },
   { name: 'Node.js', icon: Nodedotjs },
@@ -37,6 +42,48 @@ const skills = [
   { name: 'Cypress', icon: Cypress },
   { name: 'Jest', icon: Jest },
   { name: 'Git', icon: Git },
+]
+
+interface Job {
+  company: string
+  title: string
+  date: string
+  responsibilities: string[]
+}
+
+const jobs: Job[] = [
+  {
+    company: 'STX Next',
+    title: 'Javascript developer',
+    date: '04.2022 – Present',
+    responsibilities: [
+      'Working on maintaining and developing a mobile application',
+      'Creating a chrome extension',
+      'Working on a fin-tech project',
+      'Integrating with payment systems',
+      'Creating an MVP of the project',
+      'Assisting and advising other team members',
+      'Technical consultation with the client',
+      'Working with foreign clients in different time zones',
+      'Code reviews, refactoring, testing.',
+    ],
+  },
+  {
+    company: 'Ermlab Software',
+    title: 'Front-end developer',
+    date: '07.2020 – 03.2022',
+    responsibilities: [
+      'Creating web applications using React and Angular technologies',
+      'Creating data collection applications for scientific research',
+      'Creating websites that enable users to register, log in, perform actions on forms, and view data retrieved from APIs in the form of tables, graphs, and diagrams',
+      'Creating tools for manual API testing',
+      'Co-creating a Google Chrome extension',
+      'Working on client applications',
+      'Working in a team consisting of linguists, doctors, and programmers',
+      'Keeping up with programming tools and libraries',
+      'Technically supervising learning meetings and leading several of them.',
+    ],
+  },
 ]
 
 interface Props {
@@ -87,6 +134,18 @@ export default function AuthorLayout({ children, content }: Props) {
                 ))}
               </ul>
             </section>
+            <section>
+              <h2>💼 Experience</h2>
+              {jobs.map(({ company, title, date, responsibilities }) => (
+                <Job
+                  key={company}
+                  company={company}
+                  title={title}
+                  date={date}
+                  responsibilities={responsibilities}
+                />
+              ))}
+            </section>
           </div>
         </div>
       </div>
@@ -101,6 +160,22 @@ const Skill = ({ icon: Icon, name }) => {
         <Icon className="fill-current text-gray-700 hover:text-blue-500 dark:text-gray-200 dark:hover:text-blue-400 h-8 w-8" />
       </div>
       <p className="pointer-events-none select-none text-sm font-semibold">{name}</p>
+    </div>
+  )
+}
+
+const Job = ({ company, title, date, responsibilities }: Job) => {
+  return (
+    <div className="mb-16">
+      <h3 className="m-0">{title}</h3>
+      <div className="dark:text-white">{company}</div>
+      <div className="text-sm">{date}</div>
+      <div className="mt-4 dark:text-white">My job responsibilities:</div>
+      <ul>
+        {responsibilities.map((responsibility) => (
+          <li key={responsibility}>{responsibility}</li>
+        ))}
+      </ul>
     </div>
   )
 }
