@@ -1,9 +1,7 @@
 const projectsData = [
   {
-    title: 'A Anki Card Generator',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
+    title: 'Anki Card Generator',
+    description: `This project provides a convenient solution for users who want to create Anki flashcards without having to manually type in questions and answers. By leveraging the power of ChatGPT and Anki, this app makes it easy for users to study and retain information.`,
     imgSrc: '/static/images/ankigenerator.png',
     href: 'https://ankigenerator.vercel.app',
   },
