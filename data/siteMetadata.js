@@ -8,8 +8,8 @@ const siteMetadata = {
   description: 'Rozwijaj swoje programistyczne umiejętności razem ze mną.',
   language: 'pl',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteUrl: 'https://programaniak.vercel.app/',
+  siteRepo: 'https://github.com/MarcinParda/programaniak-blog',
   siteLogo: '/static/images/face.png',
   image: '/static/images/face.png',
   socialBanner: '/static/images/twitter-card.png',
