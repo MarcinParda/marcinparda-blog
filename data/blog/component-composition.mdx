@@ -1,9 +1,9 @@
 ---
-title: 'Compound Components - part 1'
+title: 'How to avoid passing dozens of props to components using component composition in React'
 date: '2023-03-19'
-tags: ['compound-components', 'react', 'patterns']
-draft: true
-summary: 'How to avoid passing dozens of props to components using compound components in React'
+tags: ['component-composition', 'react', 'patterns']
+draft: false
+summary: 'Are you tired of passing dozens of props to your components? Do you want to make your components more flexible and reusable? Then you should definitely read this article. I will show you how to avoid passing dozens of props to components using component composition in React.'
 authors: ['default']
 ---
 
@@ -45,19 +45,18 @@ As a result, our "little" monster looks like this:
 
 Once you have implemented your component, it's time to move on to the next component to be implemented, which will be a panel displaying an action error to the user. At this point, you have two options:
 
-1. Implement a new component in the same way as the previous one, but with a slightly different appearance.
+1. Implement a new component in the same way as the previous one, but with a slightly different appearance and name.
 2. Add props to the `Panel` component that will be responsible for displaying the error. As a result, the number of props may even double :(
 
-...or you can learn about **Compound Components** and implement your component in such a way that you don't have to pass dozens of props to it.
+...or you can learn about **component composition** & **compound components** and implement your component in such a way that you don't have to pass dozens of props to it. In this article we will talk about the first option.
 
 # Solution
 
-So, what are **Compound Components**?
+## Component composition
 
-**Compound Components** is a technique in React that allows you to create more complex components by composing smaller, logical sub-components.
-It sounds a bit enigmatic, doesn't it? :) But don't worry, everything will be clear soon.
+Let's start with the **component composition** technique. It is a technique that allows you to create more complex components by composing smaller, logical sub-components.
 
-You must be familiar with the html `<table>` tag. Inside this tag, you can place `<tr>` and `<td>` tags, which are responsible for displaying rows and columns in a table.
+You may be familiar with the HTML `<table>` tag. Inside this tag, you can place `<tr>` and `<td>` tags, which are responsible for displaying rows and columns in a table.
 All these tags are related to each other, and their common parent is the `<table>` tag. In this way, you can create more complex components by composing smaller, logical sub-components.
 
 In a similar way, you can create more complex components in React by composing smaller, logical sub-components.
@@ -82,15 +81,17 @@ Their usage might look like this:
 As you can see in the above example, `Select` takes its children in the form of several `MenuItem`s, instead of passing these elements in props.
 Thanks to this, these elements can be modified independently of the `Select` component. But how can we implement our `Panel` in such a way?
 
-# Implementation
+## Component composition implementation
 
-1. Let's first define the interface for our (slightly simplified) compound component `Panel`:
+1. Let's first define the interface for our (slightly simplified) component `Panel`:
 
 ```tsx
+// Panel.tsx
 interface PanelProps {
   title: string
 }
 
+// types.ts
 interface ParentProps {
   children: React.ReactNode
 }
@@ -99,6 +100,7 @@ interface ParentProps {
 2. Next, let's define the `Panel` component:
 
 ```tsx
+// Panel.tsx
 export const Panel = ({ title, children }: PanelProps & ParentProps) => {
   return (
     <div>
@@ -109,49 +111,31 @@ export const Panel = ({ title, children }: PanelProps & ParentProps) => {
 }
 ```
 
-3. Now let's define the `Header` and `Body` components:
+3. Now let's define the `PanelHeader` and `PanelBody` components:
 
 ```tsx
-Panel.Header = function PanelHeader({ children }: ParentProps) {
-  return (
-    <header>
-      <h2>{children}</h2>
-    </header>
-  )
+// PanelHeader.tsx
+export const PanelHeader = ({ children }: ParentProps) => {
+  return <header>{children}</header>
 }
 
-Panel.Body = function PanelHeader({ children }: ParentProps) {
-  return <section>{children}</section>
+// PanelBody.tsx
+export const PanelBody = ({ children }: ParentProps) => {
+  return <main>{children}</main>
 }
-```
-
-With the notation `Panel.Header = ...` we can assign a new property `Header` to `Panel`, which will contain the `Header` component.
-Additionally, the `Header` and `Body` components do not take any props, only rendering their children. This allows us to use them as follows:
-
-```tsx
-<Panel title="Panel">
-  <Panel.Header>
-    <h3>Header</h3>
-  </Panel.Header>
-  <Panel.Body>
-    <p>Body</p>
-  </Panel.Body>
-</Panel>
 ```
 
 4. The whole thing will look like this:
 
+`Panel.tsx`
+
 ```tsx
-import React from 'react'
+import { ParentProps } from './types'
 
 interface PanelProps {
   title: string
 }
 
-interface ParentProps {
-  children: React.ReactNode
-}
-
 export const Panel = ({ title, children }: PanelProps & ParentProps) => {
   return (
     <div>
@@ -160,22 +144,54 @@ export const Panel = ({ title, children }: PanelProps & ParentProps) => {
     </div>
   )
 }
+```
 
-Panel.Header = function PanelHeader({ children }: ParentProps) {
+`PanelHeader.tsx`
+
+```tsx
+import { ParentProps } from './types'
+export const PanelHeader = ({ children }: ParentProps) => {
   return <header>{children}</header>
 }
+```
 
-Panel.Body = function PanelHeader({ children }: ParentProps) {
+`PanelBody.tsx`
+
+```tsx
+import { ParentProps } from './types'
+export const PanelBody = ({ children }: ParentProps) => {
   return <main>{children}</main>
 }
 ```
 
-5. In further steps, we can add props that modify the appearance and behavior of the `Header` and `Body` components, as well as add other subcomponents if necessary.
-   As you can see, with **Compound Components** we can relieve the `Panel` component of the responsibility for rendering `Header` and `Body` and passing props to them.
-   Additionally, if necessary, we can easily swap `Header` and `Body`, which would be very difficult without **Compound Components**.
+This allows us to use these components as follows:
 
-However, what if we want the `Header` and `Body` components to be able to communicate with each other? For example, pressing a button in `Header` should hide the entire `Panel` component?
-In such a case, we can use the `Context API`. In the next article in this series, I will describe how to do it.
+```tsx
+<Panel title="Panel">
+  <PanelHeader>
+    <h3>Header</h3>
+  </PanelHeader>
+  <PanelBody>
+    <p>Body</p>
+  </PanelBody>
+</Panel>
+```
+
+By doing so, we have achieved several things:
+
+- `PanelHeader` and `PanelBody` are descendant components of `Panel`, we can easily modify them without modifying `Panel`, avoiding **props drilling**.
+- We have removed from `Panel` the responsibility of rendering `PanelHeader` and `PanelBody`. If either of these components had its own state, rendering it would not re-render the large `Panel` component.
+- We have easily obtained the ability to modify the `Panel` component. Nothing prevents us from swapping `PanelHeader` and `PanelBody` in place or removing one of them.
+
+But we also added a few problems:
+
+- We added a new layer of abstraction that you need to remember and know exists. It would also be useful to document it.
+- We don't know exactly what components we should use in `Panel` if we want the whole component to look consistent and work properly. It would be useful to have some kind of syntax prompt that would tell us what we should use in `Panel`, right? :)
+- If we wanted components to be able to communicate with each other, e.g. when we clicked a button in `PanelHeader` we wanted to hide the whole `Panel` component, then we would have to pass additional props to the components (`handleClick`, `isPanelVisible`).
+
+The solution to the last two (and partially the first) problems is to use **compund components** with the **Context API**.
+
+In the next article, I will describe how to do this.
 
 # Summary
 
@@ -183,22 +199,19 @@ That's all. I hope you enjoyed this article. If you have any questions, feel fre
 
 **Here's an addon for you.** Brief summary of an article. You can use it to create fiches cards (e.g. in Anki).
 
-## What are Compound Components?
+## What is component composition?
 
-**Compound Components** are a technique in React that allows developers to create complex components by composing smaller,
-logical subcomponents together. These subcomponents are tightly coupled together, and are used together as part of a larger
-parent component. By using Compound Components, developers can provide a more intuitive and user-friendly API for their components,
-allowing users to easily customize and modify them without having to deal with dozens of props.
+**Component composition** is a technique that allows you to create more complex components by composing smaller, logical sub-components.
 
 Example:
 
-```html
-<Dropdown>
-  <Dropdown.Button>Menu</Dropdown.Button>
-  <Dropdown.List>
-    <Dropdown.Item>Option 1</Dropdown.Item>
-    <Dropdown.Item>Option 2</Dropdown.Item>
-    <Dropdown.Item>Option 3</Dropdown.Item>
-  </Dropdown.List>
-</Dropdown>
+```tsx
+<Panel title="Panel">
+  <PanelHeader>
+    <h3>Header</h3>
+  </PanelHeader>
+  <PanelBody>
+    <p>Body</p>
+  </PanelBody>
+</Panel>
 ```
