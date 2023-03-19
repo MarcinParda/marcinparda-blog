@@ -99,7 +99,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
                 <p>
                   Do you see any error/typo in the article? Feel free to make a pull request with
-                  corrections or contact me.
+                  corrections or add a comment.
                 </p>
                 <Link href={editUrl(filePath)}>View post on GitHub</Link>
               </div>
