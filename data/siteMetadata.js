@@ -32,7 +32,7 @@ const siteMetadata = {
       theme: 'light',
       darkTheme: 'transparent_dark',
       themeURL: '',
-      lang: 'pl',
+      lang: 'en',
     },
   },
 }
