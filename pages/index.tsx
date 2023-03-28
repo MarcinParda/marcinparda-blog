@@ -50,11 +50,10 @@ export const HeroSection = (
         {siteMetadata.description}
       </p>
       <p className="text-lg leading-7 text-gray-900 dark:text-gray-100 text-justify">
-        Welcome to my <span className="font-bold">digital garden</span> - a place where I share my
-        knowledge gained in the field of <span className="font-bold">web development</span>. You can
-        also find my thoughts on self-development, work automation and pop culture here. In the{' '}
-        <span className="font-bold">projects</span> tab you can find projects I've worked on or am
-        currently working on. Make yourself comfortable.
+        Welcome to my <b>digital garden</b> - a place where I share my knowledge gained in the field
+        of <b>web development</b>. You can also find my thoughts on programming, self-development
+        and work automation here. In the <b>projects</b> tab you can find projects I've worked on or
+        am currently working on. Make yourself comfortable.
       </p>
       <div>
         <Link
