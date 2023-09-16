@@ -55,17 +55,17 @@ const jobs: Job[] = [
   {
     company: 'STX Next',
     title: 'Javascript developer',
-    date: '04.2022 – Present',
+    date: '04.2022 – Obecnie',
     responsibilities: [
-      'Working on maintaining and developing a mobile application',
-      'Creating a chrome extension',
-      'Working on a fin-tech project',
-      'Integrating with payment systems',
-      'Creating an MVP of the project',
-      'Assisting and advising other team members',
-      'Technical consultation with the client',
-      'Working with foreign clients in different time zones',
-      'Code reviews, refactoring, testing.',
+      'Praca nad utrzymaniem i rozwijaniem aplikacji mobilnej',
+      'Tworzenie rozszerzenia do przeglądarki Chrome',
+      'Praca nad projektem fin-tech',
+      'Integracja z systemami płatności',
+      'Tworzenie MVP projektu',
+      'Pomoc i doradztwo innym członkom zespołu',
+      'Konsultacje techniczne z klientem',
+      'Praca z zagranicznymi klientami w różnych strefach czasowych',
+      'Code review, refaktoryzacja, testowanie.',
     ],
   },
   {
@@ -73,15 +73,15 @@ const jobs: Job[] = [
     title: 'Front-end developer',
     date: '07.2020 – 03.2022',
     responsibilities: [
-      'Creating web applications using React and Angular technologies',
-      'Creating data collection applications for scientific research',
-      'Creating websites that enable users to register, log in, perform actions on forms, and view data retrieved from APIs in the form of tables, graphs, and diagrams',
-      'Creating tools for manual API testing',
-      'Co-creating a Google Chrome extension',
-      'Working on client applications',
-      'Working in a team consisting of linguists, doctors, and programmers',
-      'Keeping up with programming tools and libraries',
-      'Technically supervising learning meetings and leading several of them.',
+      'Tworzenie aplikacji webowych przy użyciu technologii React i Angular',
+      'Tworzenie aplikacji do zbierania danych do badań naukowych',
+      'Tworzenie stron internetowych umożliwiających użytkownikom rejestrację, logowanie, wykonywanie akcji na formularzach oraz przeglądanie danych pobranych z API w postaci tabel, wykresów i diagramów',
+      'Tworzenie narzędzi do ręcznego testowania API',
+      'Współtworzenie rozszerzenia Google Chrome',
+      'Praca nad aplikacjami klienckimi',
+      'Praca w zespole składającym się z lingwistów, lekarzy i programistów',
+      'Utrzymywanie się na bieżąco z narzędziami i bibliotekami programistycznymi',
+      'Techniczny nadzór nad spotkaniami learningowymi i prowadzenie kilku z nich.',
     ],
   },
 ]
@@ -96,11 +96,11 @@ export default function AuthorLayout({ children, content }: Props) {
 
   return (
     <>
-      <PageSEO title={`About • ${name}`} description={`About me • ${name}`} />
+      <PageSEO title={`O mnie • ${name}`} description={`O mnie • ${name}`} />
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            About me
+            O mnie
           </h1>
         </div>
         <div className="items-start space-y-2 xl:grid xl:grid-cols-3 xl:gap-x-8 xl:space-y-0">
@@ -125,7 +125,7 @@ export default function AuthorLayout({ children, content }: Props) {
           <div className="prose max-w-none pt-8 pb-8 dark:prose-dark xl:col-span-2">
             <section>{children}</section>
             <section>
-              <h2>🛠️ My main skills</h2>
+              <h2>🛠️ Używane technologie</h2>
               <ul className="p-0 flex flex-wrap list-none justify-center">
                 {skills.map(({ name, icon: Icon }) => (
                   <li key={name} className="basis-full md:basis-1/2 xl:basis-1/3 px-2">
@@ -135,7 +135,7 @@ export default function AuthorLayout({ children, content }: Props) {
               </ul>
             </section>
             <section>
-              <h2>💼 Experience</h2>
+              <h2>💼 Doświadczenie</h2>
               {jobs.map(({ company, title, date, responsibilities }) => (
                 <Job
                   key={company}
@@ -170,7 +170,7 @@ const Job = ({ company, title, date, responsibilities }: Job) => {
       <h3 className="m-0">{title}</h3>
       <div className="dark:text-white">{company}</div>
       <div className="text-sm">{date}</div>
-      <div className="mt-4 dark:text-white">My job responsibilities:</div>
+      <div className="mt-4 dark:text-white">Moje obowiązki w pracy:</div>
       <ul>
         {responsibilities.map((responsibility) => (
           <li key={responsibility}>{responsibility}</li>
