@@ -30,9 +30,9 @@ export default function Home({ posts }: InferGetStaticPropsType<typeof getStatic
           <Link
             href="/blog"
             className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            aria-label="Wszystkie posty"
+            aria-label="Wszystkie artykuły"
           >
-            All posts &rarr;
+            Wszystkie artykuły &rarr;
           </Link>
         </div>
       )}
@@ -50,10 +50,11 @@ export const HeroSection = (
         {siteMetadata.description}
       </p>
       <p className="text-lg leading-7 text-gray-900 dark:text-gray-100 text-justify">
-        Welcome to my <b>digital garden</b> - a place where I share my knowledge gained in the field
-        of <b>web development</b>. You can also find my thoughts on programming, self-development
-        and work automation here. In the <b>projects</b> tab you can find projects I've worked on or
-        am currently working on. Make yourself comfortable.
+        Witaj na mojej stronie - miejscu w którym utrwalam swoją wiedzę o{' '}
+        <b>programowaniu stron internetowych</b> i dzielę się nią z innymi. Możesz tu znaleźć moje{' '}
+        przemyślenia na temat programowania, rozwoju osobistego i automatyzacji pracy. W zakładce{' '}
+        <b>projekty</b> znajdziesz projekty nad którymi pracowałem lub aktualnie pracuję. Miłego{' '}
+        czytania!
       </p>
       <div>
         <Link
@@ -61,7 +62,7 @@ export const HeroSection = (
           className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 underline"
           aria-label={`Read about me`}
         >
-          Learn more about me &rarr;
+          Więcej o mnie &rarr;
         </Link>
       </div>
     </div>
@@ -74,7 +75,7 @@ export const HeroSection = (
 export const RecentPosts = ({ posts }: { posts: Omit<Blog, 'body' | '_raw' | '_id'>[] }) => {
   return (
     <section className="pt-8">
-      <h2 className="mb-3 text-3xl font-bold leading-8 tracking-tight">Recent posts</h2>
+      <h2 className="mb-3 text-3xl font-bold leading-8 tracking-tight">Ostatnie artykuły</h2>
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
         {!posts.length && 'No posts found.'}
         {posts.slice(0, MAX_DISPLAY).map((post) => {
@@ -84,7 +85,7 @@ export const RecentPosts = ({ posts }: { posts: Omit<Blog, 'body' | '_raw' | '_i
               <article>
                 <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
                   <dl>
-                    <dt className="sr-only">Published on</dt>
+                    <dt className="sr-only">Opublikowane</dt>
                     <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
                       <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
                     </dd>
@@ -113,7 +114,7 @@ export const RecentPosts = ({ posts }: { posts: Omit<Blog, 'body' | '_raw' | '_i
                         className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                         aria-label={`Read "${title}"`}
                       >
-                        Read more &rarr;
+                        Czytaj więcej &rarr;
                       </Link>
                     </div>
                   </div>

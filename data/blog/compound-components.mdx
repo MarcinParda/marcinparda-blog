@@ -1,29 +1,30 @@
 ---
-title: 'Compund components with React Context'
+title: 'Implementacja compound components przy użyciu React Context'
 date: '2023-03-26'
-tags: ['compund-components', 'react', 'patterns', 'react-context', 'component-composition']
+tags:
+  ['compund-components', 'react', 'wzorce-projektowe', 'react-context', 'kompozycja-komponentów']
 draft: false
-summary: 'In this article I will show you how to write better UI components with reduced number of props using the compound components with the Context API.'
+summary: 'W tym artykule pokażę Ci jak pisać lepsze komponenty UI z mniejszą liczbą propsów przy użyciu compound components wraz z Context API.'
 authors: ['default']
 ---
 
 # Problem
 
-In the [previous article](/blog/component-composition), I showed you how to avoid passing dozens of props to components using the **Compound Components** pattern. But we accured a few problems:
+W [poprzednim artykule](/blog/component-composition) pokazałem jak uniknąć przekazywania dziesiątek propsów do komponentów przy użyciu wzorca **Compound Components**. Jednakże napotkaliśmy kilka problemów:
 
-> - We added a new layer of abstraction that you need to remember and know exists. It would also be useful to document it.
-> - We don't know exactly what components we should use in `Panel` if we want the whole component to look consistent and work properly. It would be useful to have some kind of syntax prompt that would tell us what we should use in `Panel`, right? :)
-> - If we wanted components to be able to communicate with each other, e.g. when we clicked a button in `PanelHeader` we wanted to hide the whole `Panel` component, then we would have to pass additional props to the components (`handleClick`, `isPanelVisible`).
+> - Dodaliśmy nową warstwę abstrakcji, której trzeba pamiętać i wiedzieć, że istnieje. Przydałoby się ją również udokumentować.
+> - Nie wiemy dokładnie jakie komponenty powinniśmy użyć w `Panel` jeśli chcemy, żeby cały komponent wyglądał konsekwentnie i działał poprawnie. Przydałoby się jakieś podpowiedzenie składni, które powiedziałoby nam co powinniśmy użyć w `Panel`, prawda? :)
+> - Jeśli chcielibyśmy, żeby komponenty mogły ze sobą komunikować się, np. po kliknięciu przycisku w `PanelHeader` chcielibyśmy ukryć cały komponent `Panel`, to musielibyśmy przekazywać dodatkowe propsy do komponentów (`handleClick`, `isPanelVisible`).
 
-# Solution
+# Rozwiązanie
 
-## Compound components with React Context
+## Compound components przy użyciu React Context
 
-Compound component is a pattern for creating reusable components that are composed of multiple smaller components.
+Compound component to wzorzec do tworzenia wielokrotnego użytku komponentów, które składają się z wielu mniejszych komponentów.
 
-In a compound component, the main parent component provides a set of child components that work together to implement the overall functionality of the parent component.
+W compound component, główny komponent nadrzędny dostarcza zestaw komponentów podrzędnych, które współpracują ze sobą w celu wdrożenia ogólnej funkcjonalności komponentu nadrzędnego.
 
-In previous article, we created a `Panel` component that looked like this:
+W poprzednim artykule stworzyliśmy komponent `Panel`, który wyglądał tak:
 
 ```tsx
 <Panel title="Panel">
@@ -36,11 +37,11 @@ In previous article, we created a `Panel` component that looked like this:
 </Panel>
 ```
 
-First of all let's fix this issue:
+Przede wszystkim naprawmy ten problem:
 
-> - We don't know exactly what components we should use in `Panel` if we want the whole component to look consistent and work properly. It would be useful to have some kind of syntax prompt that would tell us what we should use in `Panel`, right? :)
+> - Nie wiemy dokładnie jakie komponenty powinniśmy użyć w `Panel` jeśli chcemy, żeby cały komponent wyglądał konsekwentnie i działał poprawnie. Przydałoby się jakieś podpowiedzenie składni, które powiedziałoby nam co powinniśmy użyć w `Panel`, prawda? :)
 
-To do that we only need to follow this syntax in our `Panel` component:
+Aby to zrobić wystarczy, że będziemy stosować taką składnię w naszym komponencie `Panel`:
 
 ```tsx
 Panel.Header = function PanelHeader({ children }: ParentProps) {
@@ -48,39 +49,8 @@ Panel.Header = function PanelHeader({ children }: ParentProps) {
 }
 ```
 
-So now all our `Panel.tsx` will look like these:
-
-```tsx
-import React from 'react'
-
-interface PanelProps {
-  title: string
-}
-
-interface ParentProps {
-  children: React.ReactNode
-}
-
-export const Panel = ({ title, children }: PanelProps & ParentProps) => {
-  return (
-    <div>
-      <h1>{title}</h1>
-      {children}
-    </div>
-  )
-}
-
-Panel.Header = function PanelHeader({ children }: ParentProps) {
-  return <header>{children}</header>
-}
-
-Panel.Body = function PanelHeader({ children }: ParentProps) {
-  return <main>{children}</main>
-}
-```
-
-Now when we enter `Panel.` in our editor and hit `CTRL + Space`, we should get a list of all the components that we can use in `Panel`.
-Which allows us to use it like this:
+Dzięki temu w naszym edytorze, gdy wpiszemy `Panel.` i naciśniemy `CTRL + Spacja`, powinniśmy dostać listę wszystkich komponentów, które możemy użyć w `Panel`.
+Co pozwala nam używać go w taki sposób:
 
 ```tsx
 <Panel title="Panel">
@@ -93,15 +63,14 @@ Which allows us to use it like this:
 </Panel>
 ```
 
-It solves our first problem. Besides that this code is better documenting itself. In one file we have list of child components we should use inside `<Panel>` tags.
+Rozwiązuje to nasz pierwszy problem. Poza tym ten kod lepiej się dokumentuje. W jednym pliku mamy listę komponentów podrzędnych, które powinniśmy używać wewnątrz znaczników `<Panel>`.
+Przejdźmy do **drugiego problemu**:
 
-Let's move on to **second problem**:
+> - Jeśli chcielibyśmy, żeby komponenty mogły ze sobą komunikować się, np. po kliknięciu przycisku w `PanelHeader` chcielibyśmy ukryć cały komponent `Panel`, to musielibyśmy przekazywać dodatkowe propsy do komponentów (`handleClick`, `isPanelVisible`).
 
-> - If we wanted components to be able to communicate with each other, e.g. when we clicked a button in `PanelHeader` we wanted to hide the whole `Panel` component, then we would have to pass additional props to the components (`handleClick`, `isPanelVisible`).
+Jak to osiągnąć bez nadmiernego dodawania propsów. Na pomoc przyjdzie nam React Context. Jeśli jeszcze nie wiesz czym jest React Context, polecam przeczytać [ten artykuł](https://react.dev/learn/passing-data-deeply-with-context) z nowej dokumentacji reacta.
 
-So how to achieve this without overly adding props. With the help of React Context will come to us. If you don't yet know what React Context is, I recommend reading [this article](https://react.dev/learn/passing-data-deeply-with-context) from new react documentation.
-
-To begin with, we will define a `PanelContext` for our panel:
+Na początek zdefiniujemy `PanelContext` dla naszego panelu:
 
 ```tsx
 interface PanelContextValue {
@@ -113,9 +82,9 @@ interface PanelContextValue {
 const PanelContext = React.createContext({} as PanelContextValue)
 ```
 
-In this context we will store data about whether the `Panel` is visible and two functions that will change the visibility of the panel.
+W tym kontekście będziemy przechowywać dane o tym czy `Panel` jest widoczny oraz dwie funkcje, które będą zmieniały widoczność panelu.
 
-The next thing to do will be to add state and `Provider` to the parent component `Panel`.
+Następną rzeczą do zrobienia będzie dodanie stanu i `Provider` do komponentu nadrzędnego `Panel`.
 
 ```tsx
 export const Panel = ({ title, children }: PanelProps & ParentProps) => {
@@ -136,9 +105,9 @@ export const Panel = ({ title, children }: PanelProps & ParentProps) => {
 }
 ```
 
-If the panel is not visible instead we will show a button that when clicked will show the panel. The last thing will be to use the values from the Provider in the child components.
+Jeśli panel nie jest widoczny zamiast tego pokażemy przycisk, który po kliknięciu pokaże panel. Ostatnią rzeczą będzie wykorzystanie wartości z Provider w komponentach podrzędnych.
 
-Let's now rewrite `Panel.Header` so that it can hide the entire panel without passing props to this component:
+Przepiszmy teraz `Panel.Header` tak, aby mógł ukryć cały panel bez przekazywania propsów do tego komponentu:
 
 ```tsx
 Panel.Header = function Header({ children }: ParentProps) {
@@ -152,9 +121,9 @@ Panel.Header = function Header({ children }: ParentProps) {
 }
 ```
 
-In this way we pass to the header the ability to change the state of the `Panel` component, leaving children as the only props. In a similar way, we can pass relevant functionality to other subcomponents.
+W ten sposób przekazujemy do nagłówka możliwość zmiany stanu komponentu `Panel`, pozostawiając jako jedyny propsy children. W podobny sposób możemy przekazać odpowiednią funkcjonalność do innych podkomponentów.
 
-The final `Panel.tsx` file now looks like this:
+Ostateczny plik `Panel.tsx` wygląda teraz tak:
 
 ```tsx
 import React from 'react'
@@ -207,7 +176,7 @@ Panel.Body = function Body({ children }: ParentProps) {
 }
 ```
 
-And its usage has not changed since the last code snippet even though we added new functionality:
+A jego użycie nie zmieniło się od ostatniego fragmentu kodu mimo, że dodaliśmy nową funkcjonalność:
 
 ```tsx
 <Panel title="Panel">
@@ -220,17 +189,17 @@ And its usage has not changed since the last code snippet even though we added n
 </Panel>
 ```
 
-# Summary
+# Podsumowanie
 
-That's all. I hope you enjoyed this article. If you have any questions, feel free to ask them in the comments.
+To wszystko. Mam nadzieję, że podobał Ci się ten artykuł. Jeśli masz jakieś pytania, śmiało zadawaj je w komentarzach.
 
-**Here's an addon for you.** Brief summary of an article. You can use it to create fiches cards (e.g. in Anki).
+**Oto dodatek dla Ciebie.** Krótkie podsumowanie artykułu. Możesz go wykorzystać do tworzenia fiszek (np. w Anki).
 
-## What is compound component?
+## Co to jest compound component?
 
-**Compound component** A compound component is a component that is made up of multiple sub-components. The sub-components are typically combined together in order to create a more complex component that performs a more complex function.
+**Compound component** Compound component to komponent, który składa się z wielu komponentów podrzędnych. Komponenty podrzędne są zwykle łączone ze sobą w celu utworzenia bardziej złożonego komponentu, który wykonuje bardziej złożoną funkcję.
 
-Example:
+Przykład:
 
 ```tsx
 <Panel title="Panel">

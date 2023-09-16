@@ -1,25 +1,25 @@
 ---
-title: 'How to avoid passing dozens of props to components using component composition in React'
+title: 'Jak uniknąć przekazywania wielu propsów do komponentów za pomocą kompozycji komponentów w React'
 date: '2023-03-19'
-tags: ['component-composition', 'react', 'patterns']
+tags: ['kompozycja-komponentów', 'react', 'wzorce-projektowe']
 draft: false
-summary: 'Are you tired of passing dozens of props to your components? Do you want to make your components more flexible and reusable? Then you should definitely read this article. I will show you how to avoid passing dozens of props to components using component composition in React.'
+summary: 'Masz dość przekazywania dziesiątek propsów do swoich komponentów? Chcesz sprawić, aby Twoje komponenty były bardziej elastyczne i możliwe do ponownego użycia? W takim razie koniecznie przeczytaj ten artykuł. Pokażę Ci, jak uniknąć przekazywania dziesiątek propsów do komponentów za pomocą kompozycji komponentów w React.'
 authors: ['default']
 ---
 
 # Problem
 
-Imagine that you have to implement a simple panel in your application that displays information to the user about a successful action. All you have to do is pass a few props to the component responsible for displaying this panel. Everything suggests that you can do it in 5 minutes.
+Wyobraź sobie, że musisz zaimplementować w swojej aplikacji prosty panel, który wyświetli użytkownikowi informację o pomyślnie wykonanej akcji. Wystarczy, że przekażesz kilka propsów do komponentu odpowiedzialnego za wyświetlanie tego panelu. Wszystko wskazuje na to, że możesz to zrobić w 5 minut.
 
-You start working on it, but when you begin to implement this component, you realize that you need to pass a few props related to how the panel header looks.
+Zaczynasz nad tym pracować, ale kiedy zaczynasz implementować ten komponent, zdajesz sobie sprawę, że musisz przekazać kilka propsów związanych z tym, jak wygląda nagłówek panelu.
 
-Then you notice that you need to pass several props related to how the content looks in this panel.
+Następnie zauważasz, że musisz przekazać kilka propsów związanych z tym, jak wygląda treść w tym panelu.
 
-Later on, you notice that you need to pass props responsible for how the collapsing and closing buttons of the panel look and whether to show them at all.
+Później zauważasz, że musisz przekazać propsy odpowiedzialne za to, jak wyglądają przyciski zwijania i zamykania panelu oraz czy w ogóle je pokazywać.
 
-And so on.
+I tak dalej.
 
-As a result, our "little" monster looks like this:
+W rezultacie nasz "mały" potwór wygląda tak:
 
 ```tsx
 <Panel
@@ -43,26 +43,28 @@ As a result, our "little" monster looks like this:
 />
 ```
 
-Once you have implemented your component, it's time to move on to the next component to be implemented, which will be a panel displaying an action error to the user. At this point, you have two options:
+Gdy już zaimplementujesz swój komponent, czas przejść do następnego komponentu do zaimplementowania, którym będzie panel wyświetlający użytkownikowi błąd akcji. W tym momencie masz dwie opcje:
 
-1. Implement a new component in the same way as the previous one, but with a slightly different appearance and name.
-2. Add props to the `Panel` component that will be responsible for displaying the error. As a result, the number of props may even double :(
+1. Zaimplementuj nowy komponent tak samo jak poprzedni, ale o nieco innym wyglądzie i nazwie.
+2. Dodaj propsy do komponentu `Panel`, które będą odpowiedzialne za wyświetlanie błędu. W rezultacie liczba propsów może się nawet podwoić :(
 
-...or you can learn about **component composition** & **compound components** and implement your component in such a way that you don't have to pass dozens of props to it. In this article we will talk about the first option.
+...albo możesz dowiedzieć się o **kompozycji komponentów** i **compound components** i zaimplementować swój komponent w taki sposób, aby nie musieć przekazywać do niego dziesiątek propsów. W tym artykule omówimy pierwszą opcję.
 
-# Solution
+# Rozwiązanie
 
-## Component composition
+## Kompozycja komponentów
 
-Let's start with the **component composition** technique. It is a technique that allows you to create more complex components by composing smaller, logical sub-components.
+Zacznijmy od techniki **kompozycji komponentów**. Jest to technika, która pozwala tworzyć bardziej złożone komponenty poprzez komponowanie mniejszych, logicznych podkomponentów.
 
-You may be familiar with the HTML `<table>` tag. Inside this tag, you can place `<tr>` and `<td>` tags, which are responsible for displaying rows and columns in a table.
-All these tags are related to each other, and their common parent is the `<table>` tag. In this way, you can create more complex components by composing smaller, logical sub-components.
+Możesz znać tag HTML `<table>`. Wewnątrz tego tagu możesz umieścić tagi `<tr>` i `<td>`, które są odpowiedzialne za wyświetlanie wierszy i kolumn w tabeli.
 
-In a similar way, you can create more complex components in React by composing smaller, logical sub-components.
-If you have used the [Material UI](https://material-ui.com/), library, you must be familiar with components such as `Button`, `TextField` or `Select`.
+Wszystkie te tagi są ze sobą powiązane, a ich wspólnym rodzicem jest tag `<table>`. W ten sposób możesz tworzyć bardziej złożone komponenty, komponując mniejsze, logiczne podkomponenty.
 
-Their usage might look like this:
+W podobny sposób możesz tworzyć bardziej złożone komponenty w React, komponując mniejsze, logiczne podkomponenty.
+
+Jeśli korzystałeś z biblioteki [Material UI](https://material-ui.com/), musisz znać komponenty takie jak `Button`, `TextField` lub `Select`.
+
+Ich użycie może wyglądać tak:
 
 ```tsx
 <Select
@@ -78,12 +80,13 @@ Their usage might look like this:
 </Select>
 ```
 
-As you can see in the above example, `Select` takes its children in the form of several `MenuItem`s, instead of passing these elements in props.
-Thanks to this, these elements can be modified independently of the `Select` component. But how can we implement our `Panel` in such a way?
+Jak widać w powyższym przykładzie, `Select` przyjmuje swoje dzieci w postaci kilku `MenuItem`, zamiast przekazywać te elementy w propsach.
 
-## Component composition implementation
+Dzięki temu elementy te można modyfikować niezależnie od komponentu `Select`. Ale jak możemy zaimplementować nasz `Panel` w taki sposób?
 
-1. Let's first define the interface for our (slightly simplified) component `Panel`:
+## Implementacja kompozycji komponentów
+
+1. Najpierw zdefiniujmy interfejs dla naszego (nieco uproszczonego) komponentu `Panel`:
 
 ```tsx
 // Panel.tsx
@@ -97,7 +100,7 @@ interface ParentProps {
 }
 ```
 
-2. Next, let's define the `Panel` component:
+2. Następnie zdefiniujmy komponent `Panel`:
 
 ```tsx
 // Panel.tsx
@@ -111,7 +114,7 @@ export const Panel = ({ title, children }: PanelProps & ParentProps) => {
 }
 ```
 
-3. Now let's define the `PanelHeader` and `PanelBody` components:
+3. Teraz zdefiniujmy komponenty `PanelHeader` i `PanelBody`:
 
 ```tsx
 // PanelHeader.tsx
@@ -125,7 +128,7 @@ export const PanelBody = ({ children }: ParentProps) => {
 }
 ```
 
-4. The whole thing will look like this:
+4. Całość będzie wyglądać tak:
 
 `Panel.tsx`
 
@@ -164,7 +167,7 @@ export const PanelBody = ({ children }: ParentProps) => {
 }
 ```
 
-This allows us to use these components as follows:
+Dzięki temu możemy używać tych komponentów w następujący sposób:
 
 ```tsx
 <Panel title="Panel">
@@ -177,33 +180,33 @@ This allows us to use these components as follows:
 </Panel>
 ```
 
-By doing so, we have achieved several things:
+Dzięki temu osiągnęliśmy kilka rzeczy:
 
-- `PanelHeader` and `PanelBody` are descendant components of `Panel`, we can easily modify them without modifying `Panel`, avoiding **props drilling**.
-- We have removed from `Panel` the responsibility of rendering `PanelHeader` and `PanelBody`. If either of these components had its own state, rendering it would not re-render the large `Panel` component.
-- We have easily obtained the ability to modify the `Panel` component. Nothing prevents us from swapping `PanelHeader` and `PanelBody` in place or removing one of them.
+- `PanelHeader` i `PanelBody` są komponentami potomnymi `Panel`, możemy je łatwo modyfikować bez modyfikowania `Panel`, unikając **props drilling**.
+- Usunęliśmy z `Panel` odpowiedzialność za renderowanie `PanelHeader` i `PanelBody`. Gdyby którykolwiek z tych komponentów miał swój własny stan, renderowanie go nie spowodowałoby ponownego renderowania dużego komponentu `Panel`.
+- Łatwo uzyskaliśmy możliwość modyfikacji komponentu `Panel`. Nic nie stoi na przeszkodzie, aby zamienić `PanelHeader` i `PanelBody` w miejscu lub usunąć jeden z nich.
 
-But we also added a few problems:
+Ale dodaliśmy też kilka problemów:
 
-- We added a new layer of abstraction that you need to remember and know exists. It would also be useful to document it.
-- We don't know exactly what components we should use in `Panel` if we want the whole component to look consistent and work properly. It would be useful to have some kind of syntax prompt that would tell us what we should use in `Panel`, right? :)
-- If we wanted components to be able to communicate with each other, e.g. when we clicked a button in `PanelHeader` we wanted to hide the whole `Panel` component, then we would have to pass additional props to the components (`handleClick`, `isPanelVisible`).
+- Dodaliśmy nową warstwę abstrakcji, o której musisz pamiętać i wiedzieć, że istnieje. Przydałoby się też ją udokumentować.
+- Nie wiemy dokładnie, jakie komponenty powinniśmy użyć w `Panel`, jeśli chcemy, aby cały komponent wyglądał spójnie i działał poprawnie. Przydałoby się mieć rodzaj podpowiedzi składni, która powiedziałaby nam, co powinniśmy użyć w `Panel`, prawda? :)
+- Gdybyśmy chcieli, aby komponenty mogły ze sobą komunikować się, np. gdy klikniemy przycisk w `PanelHeader` chcielibyśmy ukryć cały komponent `Panel`, to musielibyśmy przekazać dodatkowe propsy do komponentów (`handleClick`, `isPanelVisible`).
 
-The solution to the last two (and partially the first) problems is to use **compund components** with the **Context API**.
+Rozwiązaniem ostatnich dwóch (a częściowo pierwszego) problemów jest użycie **compound components** z **Context API**.
 
-In the next article, I will describe how to do this.
+W następnym artykule opiszę, jak to zrobić.
 
-# Summary
+# Podsumowanie
 
-That's all. I hope you enjoyed this article. If you have any questions, feel free to ask them in the comments.
+To wszystko. Mam nadzieję, że podobał Ci się ten artykuł. Jeśli masz jakieś pytania, śmiało zadaj je w komentarzach.
 
-**Here's an addon for you.** Brief summary of an article. You can use it to create fiches cards (e.g. in Anki).
+**Oto dodatek dla Ciebie.** Krótkie podsumowanie artykułu. Możesz go wykorzystać do tworzenia kart fiches (np. w Anki).
 
-## What is component composition?
+## Czym jest kompozycja komponentów?
 
-**Component composition** is a technique that allows you to create more complex components by composing smaller, logical sub-components.
+**Kompozycja komponentów** to technika, która pozwala tworzyć bardziej złożone komponenty poprzez komponowanie mniejszych, logicznych podkomponentów.
 
-Example:
+Przykład:
 
 ```tsx
 <Panel title="Panel">

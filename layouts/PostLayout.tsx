@@ -95,10 +95,10 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="prose max-w-none pt-10 pb-8 dark:prose-dark">{children}</div>
               <div className="pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
                 <p>
-                  Do you see any error/typo in the article? Feel free to make a pull request with
-                  corrections or add a comment.
+                  Widzisz błąd / literówkę w artykule? Zgłoś poprawkę lub dodaj komentarz na dole.
                 </p>
-                <Link href={editUrl(filePath)}>View post on GitHub</Link>
+
+                <Link href={editUrl(filePath)}>Zobacz post na GitHubie</Link>
               </div>
               {siteMetadata.comments && (
                 <div
@@ -114,7 +114,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 {tags && (
                   <div className="py-4 xl:py-8">
                     <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      Tags
+                      Tagi
                     </h2>
                     <div className="flex flex-wrap">
                       {tags.map((tag) => (
@@ -128,7 +128,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                     {prev && (
                       <div>
                         <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Previous Article
+                          Poprzedni artykuł
                         </h2>
                         <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
                           <Link href={`/${prev.path}`}>{prev.title}</Link>
@@ -138,7 +138,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                     {next && (
                       <div>
                         <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Next Article
+                          Następny artykuł
                         </h2>
                         <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
                           <Link href={`/${next.path}`}>{next.title}</Link>
@@ -152,9 +152,9 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 <Link
                   href={`/${basePath}`}
                   className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                  aria-label="Back to the blog"
+                  aria-label="Wróć do bloga"
                 >
-                  &larr; Back to the blog
+                  &larr; Wróć do bloga
                 </Link>
               </div>
             </footer>
