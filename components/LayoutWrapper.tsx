@@ -1,4 +1,4 @@
-import { Noto_Serif_Khojki } from '@next/font/google'
+import { Lato } from '@next/font/google'
 import SectionContainer from './SectionContainer'
 import Footer from './Footer'
 import { ReactNode } from 'react'
@@ -8,7 +8,8 @@ interface Props {
   children: ReactNode
 }
 
-const font = Noto_Serif_Khojki({
+const font = Lato({
+  weight: ['400', '700'],
   subsets: ['latin-ext'],
 })
 
