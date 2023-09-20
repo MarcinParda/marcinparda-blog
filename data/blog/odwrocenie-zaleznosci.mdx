@@ -2,7 +2,7 @@
 title: 'Odwrócenie zależności'
 date: '2023-09-17'
 tags: ['paradygmaty', 'wzorce-projektowe']
-draft: true
+draft: false
 summary: 'Ten artukuł to tłumaczenie posta Inversion of Control autorstwa Kent C. Dodds. W artykule Kent opisuje jak odwrócenie zależności może pomóc w tworzeniu kodu wielokrotnego użytku.'
 authors: ['default']
 ---
@@ -13,28 +13,28 @@ authors: ['default']
 
 Jeśli kiedykolwiek tworzyłeś kod, który był używany w więcej niż jednym miejscu, to prawdopodobnie znasz tę historię:
 
-1.  Tworzysz kod wielokrotnego użytku (funkcję, komponent React lub hak React, itp.) I udostępniasz go (współpracownikom lub publikujesz go jako OSS).
-2.  Ktoś podchodzi do Ciebie z nowym przypadkiem użycia, którego Twój kod nie _do końca_ obsługuje, ale mógłby z niewielką poprawką.
-3.  Dodajesz argument / prop / opcję do kodu wielokrotnego użytku i powiązanej logiki, aby obsługiwać ten przypadek użycia.
+1.  Tworzysz kod wielokrotnego użytku (funkcję, komponent React lub React hook, itp.) I udostępniasz go (współpracownikom lub publikujesz go jako kod Open Source).
+2.  Ktoś podchodzi do ciebie z nowym przypadkiem użycia, którego twój kod nie _do końca_ obsługuje, ale mógłby z niewielką poprawką.
+3.  Dodajesz kolejny argument/prop/opcję do kodu wielokrotnego użytku i powiązanej logiki, aby obsługiwać ten przypadek użycia.
 4.  Powtórz kroki 2 i 3 kilka razy (lub wiele razy 😬).
 5.  Kod wielokrotnego użytku jest teraz koszmarem do użycia i konserwacji 😭
 
-I co dokładnie sprawia, że ​​kod jest koszmarem do użycia i konserwacji? Istnieje kilka rzeczy, które mogą być problemem:
+Co dokładnie sprawia, że ten ​​kod jest koszmarem do użycia i konserwacji? Istnieje kilka rzeczy, które mogą być problemem:
 
-1.  😵 **Rozmiar pakietu i / lub wydajność:** Jest po prostu więcej kodu do uruchomienia przez urządzenia, co może wpływać na wydajność w negatywny sposób. Czasami może być na tyle źle, że ludzie decydują się nawet nie badać używania Twojego kodu ze względu na te problemy.
-2.  😖 **Nadmiar konserwacji:** Wcześniej Twój kod wielokrotnego użytku miał tylko kilka opcji i skupiał się na tym, aby dobrze wykonywać jedną rzecz, ale teraz może zrobić wiele różnych rzeczy i potrzebujesz dokumentacji dla tych funkcji. Ponadto będziesz otrzymywać wiele pytań od osób, które chcą użyć go do swoich konkretnych przypadków użycia, które mogą lub nie mogą dobrze odzwierciedlać przypadki użycia, które już obsługujesz. Może nawet zdarzyć się, że dwie funkcje pozwalają na to samo, ale nieco inaczej, więc będziesz odpowiadać na pytania, która jest lepsza.
-3.  🐛 **Złożoność implementacji:** To _nigdy_ nie jest "tylko instrukcja `if`". Każda gałąź logiki w Twoim kodzie łączy się z istniejącymi gałęziami logiki. Faktycznie istnieją sytuacje, w których możesz obsługiwać kombinację argumentów / opcji / propsów, których nikt nie używa, ale musisz upewnić się, że ich nie zepsujesz, gdy dodajesz nowe funkcje, ponieważ nie wiesz, czy ktoś używa tej kombinacji czy nie.
-4.  😕 **Złożoność API:** Każdy nowy argument / opcja / prop, który dodajesz do kodu wielokrotnego użytku, sprawia, że ​​jest trudniejszy do użycia, ponieważ masz teraz ogromny README / witrynę dokumentacji, która dokumentuje wszystkie dostępne funkcje, a ludzie muszą nauczyć się wszystkiego, co jest dostępne, aby używać ich efektywnie. Jest mniej przyjemności z korzystania z niego, ponieważ często złożoność Twojego API wycieka do kodu dewelopera aplikacji w sposób, który sprawia, że ​​ich kod jest bardziej złożony.
+1.  😵 **Rozmiar pakietu i/lub wydajność:** Jest po prostu więcej kodu do uruchomienia przez urządzenia, co może wpływać na wydajność w negatywny sposób. Czasami może być na tyle źle, że ludzie decydują się nawet nie rozważać użycia Twojego kodu ze względu na te problemy.
+2.  😖 **Nadmiar konserwacji:** Wcześniej twój kod wielokrotnego użytku miał tylko kilka opcji i skupiał się na tym, aby dobrze wykonywać jedną rzecz, ale teraz może zrobić wiele różnych rzeczy i potrzebujesz dokumentacji dla tych funkcji. Ponadto będziesz otrzymywać wiele pytań od osób, które chcą użyć go do swoich konkretnych przypadków użycia, które mogą lub nie mogą dobrze odzwierciedlać przypadki użycia, które już obsługujesz. Może nawet zdarzyć się, że dwie funkcje pozwalają na to samo, ale nieco inaczej, więc będziesz odpowiadać na pytania, która jest lepsza.
+3.  🐛 **Złożoność implementacji:** To _nigdy_ nie jest "tylko instrukcja `if`". Każda gałąź logiki w Twoim kodzie łączy się z istniejącymi gałęziami logiki. Faktycznie istnieją sytuacje, w których możesz obsługiwać kombinację argumentów/opcji/propsów, których nikt nie używa, ale musisz upewnić się, że ich nie zepsujesz, gdy dodajesz nowe funkcje, ponieważ nie wiesz, czy ktoś używa tej kombinacji czy nie.
+4.  😕 **Złożoność API:** Każdy nowy argument/opcja/prop, który dodajesz do kodu wielokrotnego użytku, sprawia, że ​​jest trudniejszy do użycia, ponieważ masz teraz ogromną README/dokumentację, która dokumentuje wszystkie dostępne funkcje, a ludzie muszą nauczyć się wszystkiego, co jest dostępne, aby używać ich efektywnie. Jest mniej przyjemności z korzystania z kodu, ponieważ często złożoność twojego API trafia do kodu dewelopera aplikacji w sposób, który sprawia, że ​​ich kod jest bardziej złożony.
 
-Więc teraz wszyscy są smutni z tego powodu. Jest coś do powiedzenia o tym, że wysyłka jest najważniejsza, gdy tworzymy aplikacje. Ale myślę, że byłoby fajnie, gdybyśmy mogli być świadomi naszych abstrakcji (czytaj [AHA Programming](/blog/aha-programming)) _i_ wysyłali nasze aplikacje. Jeśli istnieje coś, co możemy zrobić, aby zredukować problemy z kodem wielokrotnego użytku, jednocześnie czerpiąc korzyści z tych abstrakcji.
+Więc teraz wszyscy są smutni z tego powodu. Można powiedzieć, że dostarczanie jest najważniejsza, gdy tworzymy aplikacje. Ale myślę, że byłoby fajnie, gdybyśmy mogli być świadomi naszych abstrakcji (czytaj [AHA Programming](/blog/aha-programming)) _i_ dostarczali nasze aplikacje. Jeśli istnieje coś, co możemy zrobić, aby zredukować problemy z kodem wielokrotnego użytku, jednocześnie czerpiąc korzyści z tych abstrakcji.
 
-## [Wejdź: Odwrócenie zależności](#wejdz-odwrocenie-zaleznosci)
+## [Wstęp: Odwrócenie zależności](#wstep-odwrocenie-zaleznosci)
 
-Jedną z zasad, której nauczyłem się, która jest naprawdę skutecznym mechanizmem prostoty abstrakcji, jest "Odwrócenie zależności". Oto, co [strona Wikipedia Inversion of control](https://en.wikipedia.org/wiki/Inversion_of_control) mówi o tym:
+Jedną z zasad, której nauczyłem się, która jest naprawdę skutecznym mechanizmem prostoty abstrakcji, jest "Odwrócenie zależności". Oto, co [strona Wikipedii o odwróceniu zależności](https://en.wikipedia.org/wiki/Inversion_of_control) mówi o tym:
 
-> ... w tradycyjnym programowaniu kod niestandardowy, który wyraża cel programu, wywołuje do ponownego użycia biblioteki, aby wykonać zadania ogólne, ale w przypadku odwrócenia kontroli to framework wywołuje kod niestandardowy lub specyficzny dla zadania.
+> ...w tradycyjnym programowaniu kod, który wyraża cel programu, wywołuje biblioteki, aby wykonać zadania ogólne, ale w przypadku odwrócenia kontroli to framework wywołuje kod lub specyficzny dla zadania.
 
-Możesz to traktować jako to: "Spraw, aby Twoja abstrakcja robiła mniej rzeczy, a użytkownicy robią to zamiast niej". Może to wydawać się sprzeczne, ponieważ częścią tego, co sprawia, że ​​abstrakcje są takie wspaniałe, jest to, że możemy obsługiwać wszystkie złożone i powtarzające się zadania w ramach abstrakcji, dzięki czemu reszta naszego kodu może być "prosta", "porządna" lub "czysta". Ale jak już doświadczyliśmy, tradycyjne abstrakcje czasami nie działają tak.
+Możesz o tym myśleć tak: "Spraw, aby twoja abstrakcja robiła mniej rzeczy, a osoby używającej jej robią to zamiast niej". Może to wydawać się sprzeczne, ponieważ częścią tego, co sprawia, że ​​abstrakcje są takie wspaniałe, jest to, że możemy obsługiwać wszystkie złożone i powtarzające się zadania w ramach abstrakcji, dzięki czemu reszta naszego kodu może być "prosta", "porządna" lub "czysta". Ale jak już doświadczyliśmy, tradycyjne abstrakcje czasami tak nie działają.
 
 ## [Co to jest odwrócenie kontroli w kodzie?](#co-to-jest-odwrocenie-kontroli-w-kodzie)
 
@@ -54,7 +54,7 @@ function filter(array) {
 }
 ```
 
-Teraz zagrajmy w typowy "cykl życia abstrakcji", rzucając tona nowych powiązanych przypadków użycia w tej abstrakcji i "bezmyślnie ją ulepszając", aby obsługiwać te nowe przypadki użycia:
+Teraz zagrajmy w typowy "cykl życia abstrakcji", rzucając tonę nowych powiązanych przypadków użycia w tej abstrakcji i "bezmyślnie ją ulepszając", aby obsługiwać te nowe przypadki użycia:
 
 ```ts
 // udawajmy że Array.prototype.filter nie istnieje
@@ -95,11 +95,11 @@ filter([0, 1, undefined, 2, null, 3, 'four', ''], { filterEmptyString: true })
 // [0, 1, 2, 3, 'four']
 ```
 
-Dobrze, więc faktycznie potrzebujemy tylko sześciu przypadków użycia, o których aplikacja się troszczy, ale faktycznie obsługujemy dowolną kombinację tych funkcji, co daje 25 (jeśli dobrze policzyłem).
+Dobrze, więc faktycznie potrzebujemy tylko sześciu przypadków użycia, o których aplikacja się troszczy, ale faktycznie obsługujemy dowolną kombinację tych funkcji, co daje razem 25 kombinacji (jeśli dobrze policzyłem).
 
-I to jest dość prosta abstrakcja w ogóle. Jestem pewien, że można by ją uprościć. Ale często, gdy wracasz do abstrakcji po tym, jak koło czasu się na niej obróciło, okazuje się, że można ją znacznie uprościć dla przypadków użycia, które faktycznie obsługuje. Niestety, gdy abstrakcja obsługuje coś (takiego jak `{filterZero: true, filterUndefined: false}`), boimy się usunąć tę funkcję z obawy przed zepsuciem dewelopera aplikacji używającego naszej abstrakcji.
+I to w dodatku jest prosta abstrakcja. Jestem pewien, że można by ją uprościć. Ale często, gdy wracasz do abstrakcji po tym, jak minęło trochę czasu, okazuje się, że można ją znacznie uprościć dla przypadków użycia, które faktycznie obsługuje. Niestety, gdy abstrakcja obsługuje coś (takiego jak `{filterZero: true, filterUndefined: false}`), boimy się usunąć tę funkcję z obawy przed zepsuciem aplikacji używającej naszej abstrakcji.
 
-Nawet piszemy testy dla przypadków użycia, których tak naprawdę nie mamy, tylko dlatego, że nasza abstrakcja je obsługuje i "może" być to potrzebne w przyszłości. A kiedy przypadki użycia nie są już potrzebne, nie usuwamy ich obsługi, ponieważ po prostu zapominamy, myślimy, że może ich potrzebować w przyszłości, lub boimy się dotykać kodu.
+Nawet napiszemy testy dla przypadków użycia, których tak naprawdę jeszcze nie mamy, tylko dlatego, że nasza abstrakcja je obsługuje i "może" być to potrzebne w przyszłości. A kiedy przypadki użycia nie są już potrzebne, nie usuwamy ich obsługi, ponieważ po prostu zapominamy, myślimy, że może ich potrzebować w przyszłości, lub boimy się dotykać kodu.
 
 Dobrze, więc teraz, rozważmy trochę przemyślanej abstrakcji na tej funkcji i zastosujmy odwrócenie kontroli, aby obsługiwać wszystkie te przypadki użycia:
 
@@ -161,7 +161,7 @@ filter(
 // ]
 ```
 
-Wyobraź sobie, że musisz dodać obsługę tego wcześniej, zanim odwrócisz kontrolę? To byłoby po prostu głupie...
+Wyobraź sobie, że musisz dodać obsługę tego wcześniej, przed odwróceniem kontroli? To byłoby po prostu głupie...
 
 ## [Gorsze API?](#gorsze-api)
 
@@ -195,7 +195,7 @@ function filterWithOptions(
 }
 ```
 
-Fajnie, prawda!? Więc możemy budować abstrakcje na podstawie API z odwróconą kontrolą, które dają prostsze API, których ludzie szukają. I co więcej, jeśli nasze "prostsze" API nie jest wystarczające dla ich przypadku użycia, to mogą użyć tych samych bloczków budulcowych, których użyliśmy do zbudowania naszego API wyższego poziomu, aby wykonać swoje bardziej złożone zadanie. Nie muszą prosić nas o dodanie nowej funkcji do `filterWithOptions` i czekać, aż zostanie to zakończone. Mają narzędzia, których potrzebują, aby wysłać swoje rzeczy, ponieważ daliśmy im narzędzia do tego.
+Fajnie, prawda!? Więc możemy budować abstrakcje na podstawie API z odwróconą kontrolą, które dają prostsze API, których ludzie szukają. I co więcej, jeśli nasze "prostsze" API nie jest wystarczające dla ich przypadku użycia, to mogą użyć tych samych bloczków budulcowych, których użyliśmy do zbudowania naszego API wyższego poziomu, aby wykonać swoje bardziej złożone zadanie. Nie muszą prosić nas o dodanie nowej funkcji do `filterWithOptions` i czekać, aż zostanie to zakończone. Mają narzędzia, których potrzebują, aby wysłać swoje rzeczy, ponieważ daliśmy im je.
 
 Aha, i dla zabawy:
 
@@ -224,9 +224,9 @@ filterByLegCount(
 
 Możesz komponować te rzeczy tak, jak chcesz, aby rozwiązać wspólne przypadki użycia, których potrzebujesz.
 
-## [Ok, ale na serio teraz?](#ok-ale-na-serio-teraz)
+## [Ok, ale teraz na serio?](#ok-ale-teraz-na-serio)
 
-Więc to działa dla prostego przypadku użycia, ale do czego to jest dobre w prawdziwym świecie? Prawdopodobnie używasz API z odwróconą kontrolą cały czas, nie zauważając. Na przykład _faktyczna_ funkcja `Array.prototype.filter` odwraca kontrolę. Tak samo jak funkcja `Array.prototype.map`.
+Odwrócenie zależności działa dla prostego przypadku użycia, ale do czego to jest dobre w prawdziwym świecie? Prawdopodobnie używasz API z odwróconą kontrolą cały czas, nie zauważając. Na przykład _faktyczna_ funkcja `Array.prototype.filter` odwraca kontrolę. Tak samo jak funkcja `Array.prototype.map`.
 
 Istnieją również wzorce, z którymi możesz być zaznajomiony, które są w zasadzie formą odwrócenia kontroli.
 
@@ -255,9 +255,9 @@ function App() {
 }
 ```
 
-Dzięki temu możemy dostosować wiele rzeczy w naszym elemencie Menu. Ale co, jeśli chcielibyśmy wstawić linię przed elementem menu Delete? Czy musielibyśmy dodać opcję do obiektów elementów? Jak, nie wiem: `precedeWithLine`? O matko. Może mielibyśmy specjalny rodzaj elementu menu, który jest `{contents: <hr />}`. Myślę, że to by zadziałało, ale wtedy musielibyśmy obsłużyć przypadek, w którym nie jest dostarczony `onSelect`. I to jest naprawdę niezręczne API.
+Dzięki temu możemy dostosować wiele rzeczy w naszym elemencie Menu. Ale co, jeśli chcielibyśmy wstawić linię przed elementem menu Delete? Czy musielibyśmy dodać opcję do tablicy obiektów elementów? Na przykład: `precedeWithLine`? O matko. Może mielibyśmy specjalny rodzaj elementu menu, który jest `{contents: <hr />}`. Myślę, że to by zadziałało, ale wtedy musielibyśmy obsłużyć przypadek, w którym nie jest dostarczony `onSelect`. I to jest naprawdę nieporęczne API.
 
-Gdy myślisz o tym, jak stworzyć ładne API dla osób, które próbują robić rzeczy nieco inaczej, zamiast sięgać po instrukcje `if` i ternary, rozważ możliwość odwrócenia kontroli. W tym przypadku co byśmy nie dali renderowania użytkownikowi naszych komponentów? Wykorzystajmy jedną z największych zalet Reacta, jaką jest komponowalność:
+Gdy myślisz o tym, jak stworzyć ładne API dla osób, które próbują robić rzeczy nieco inaczej, zamiast sięgać po instrukcje `if` i operator trójskładniowy (ternary operator), rozważ możliwość odwrócenia kontroli. W tym przypadku, co jeśli byśmy dali odpowiedzialność renderowania użytkownikowi naszych komponentów? Wykorzystajmy jedną z największych zalet Reacta, jaką jest komponowalność:
 
 ```ts
 function App() {
@@ -278,11 +278,11 @@ function App() {
 
 Kluczową rzeczą do zauważenia tutaj jest to, że nie ma stanu widocznego dla użytkownika komponentów. Stan jest niejawnie współdzielony między tymi komponentami. To jest główną wartością wzorca komponentów złożonych. Korzystając z tej możliwości, oddaliśmy niektóre zadania renderowania użytkownikowi naszych komponentów, a teraz dodanie dodatkowej linii (lub czegokolwiek innego) jest dość trywialne i intuicyjne. Nie ma dokumentacji API do wyszukiwania, a nie ma dodatkowych funkcji, kodu ani testów do dodania. Duży sukces dla wszystkich.
 
-Możesz przeczytać więcej na temat tego wzorca [na moim blogu](/blog/compound-components-with-react-hooks). Kapelusz do [Ryana Florence](https://twitter.com/ryanflorence), który mnie tego wzorca nauczył.
+Możesz przeczytać więcej na temat tego wzorca [na moim blogu](/blog/compound-components-with-react-hooks). Podziękowania dla [Ryana Florence](https://twitter.com/ryanflorence), który mnie tego wzorca nauczył.
 
 ### [State Reducer](#state-reducer)
 
-Jest to wzorzec, który wymyśliłem, aby rozwiązać problem dostosowywania logiki komponentu. Więcej na ten temat możesz przeczytać w moim poście na blogu ["The State Reducer Pattern"](/blog/the-state-reducer-pattern), ale podstawową ideą jest to, że miałem bibliotekę wyszukiwania / wpisywania / autouzupełniania wejścia o nazwie `Downshift`, a ktoś budował wersję wielokrotnego wyboru komponentu, więc chcieli, aby menu pozostało otwarte nawet po wybraniu elementu.
+Jest to wzorzec, który wymyśliłem, aby rozwiązać problem dostosowywania logiki komponentu. Więcej na ten temat możesz przeczytać w moim poście na blogu ["The State Reducer Pattern"](/blog/the-state-reducer-pattern), ale podstawową ideą jest to, że miałem bibliotekę wyszukiwania/wpisywania/autouzupełniania wejścia o nazwie `Downshift`, a ktoś budował wersję wielokrotnego wyboru komponentu, więc chcieli, aby menu pozostało otwarte nawet po wybraniu elementu.
 
 W `Downshift` mieliśmy logikę, która mówiła, że powinna zamknąć się, gdy zostanie dokonany wybór. Osoba potrzebująca funkcji zaproponowała dodanie propa o nazwie `closeOnSelection`. Odrzuciłem to, ponieważ byłem już na tej drodze [apropcalypse](https://twitter.com/gurlcode/status/1002110517094371328) i chciałem tego uniknąć.
 
@@ -315,9 +315,9 @@ Po dodaniu tego propa dostaliśmy ZNACZNIE mniej żądań dostosowania komponent
 
 ### [Render Props](#render-props)
 
-Chciałbym tylko krótko wspomnieć o wzorcu [render props](https://reactjs.org/docs/render-props.html), który jest doskonałym przykładem odwrócenia kontroli, ale nie potrzebujemy ich tak często, więc nie będę o nich mówić.
+Chciałbym tylko krótko wspomnieć o wzorcu [render props](https://reactjs.org/docs/render-props.html), który jest doskonałym przykładem odwrócenia kontroli, ale nie potrzebujemy go tak często, więc nie będę o nich mówić.
 
-[Przeczytaj, dlaczego nie potrzebujemy Render Props tak często](/blog/react-hooks-whats-going-to-happen-to-render-props)
+[Przeczytaj, dlaczego już nie potrzebujemy Render Props tak często](/blog/react-hooks-whats-going-to-happen-to-render-props)
 
 ## [Słowo ostrzeżenia](#slowo-ostrzezenia)
 
@@ -348,9 +348,9 @@ Jak w przypadku każdej abstrakcji, proszę o rozwagę i zastosowanie zasady [AH
 
 ## [Podsumowanie](#podsumowanie)
 
-Mam nadzieję, że to ci pomoże. Pokazałem Ci kilka wzorców w społeczności React, które wykorzystują koncepcję odwrócenia kontroli. Istnieją inne, a koncepcja ta dotyczy nie tylko React (jak widzieliśmy na przykładzie `filter`). Następnym razem, gdy dodasz kolejne instrukcje `if` do funkcji `coreBusinessLogic` swojej aplikacji, rozważ, jak możesz odwrócić kontrolę i przenieść logikę do miejsca, w którym jest używana (lub jeśli jest używana w wielu miejscach, możesz zbudować bardziej dopasowaną do tego konkretnego przypadku użycia abstrakcję).
+Mam nadzieję, że to ci pomoże. Pokazałem Ci kilka wzorców w ekosystemie React, które wykorzystują koncepcję odwrócenia kontroli. Istnieją inne, a koncepcja ta dotyczy nie tylko React (jak widzieliśmy na przykładzie `filter`). Następnym razem, gdy dodasz kolejne instrukcje `if` do funkcji `coreBusinessLogic` swojej aplikacji, rozważ, jak możesz odwrócić kontrolę i przenieść logikę do miejsca, w którym jest używana (lub jeśli jest używana w wielu miejscach, możesz zbudować bardziej dopasowaną do tego konkretnego przypadku użycia abstrakcję).
 
-Jeśli chcesz pobawić się przykładem w tym poście na blogu, możesz:
+Jeśli chcesz pobawić się przykładem w tym poście na blogu, zapraszam tutaj:
 
 [![Edytuj odwrócenie kontroli](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/inversion-of-control-qunm8?fontsize=14&hidenavigation=1&theme=dark)
 
